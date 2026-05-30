@@ -33,69 +33,6 @@ local camera = Workspace.CurrentCamera
 local CharactersFolder = Workspace:WaitForChild("Characters", 10)
 
 --// ==========================================
---// MINIMIZE BUTTON (LEFT ALT)
---// ==========================================
-local Minimized = false
-local MinimizeKey = Enum.KeyCode.LeftAlt
-
--- Create minimize button GUI
-local MinimizeGui = Instance.new("ScreenGui")
-MinimizeGui.Name = "MinimizeGui"
-MinimizeGui.Parent = game:GetService("CoreGui")
-
-local MinimizeBtn = Instance.new("TextButton")
-MinimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-MinimizeBtn.Position = UDim2.new(0, 10, 0, 10)
-MinimizeBtn.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
-MinimizeBtn.BorderSizePixel = 0
-MinimizeBtn.Text = "─"
-MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeBtn.Font = Enum.Font.SourceSansBold
-MinimizeBtn.TextSize = 20
-MinimizeBtn.Visible = false
-MinimizeBtn.Active = true
-MinimizeBtn.Draggable = true
-MinimizeBtn.Parent = MinimizeGui
-
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 4)
-UICorner.Parent = MinimizeBtn
-
-MinimizeBtn.MouseButton1Click:Connect(function()
-    Rayfield:Toggle()
-end)
-
--- Toggle minimize button visibility based on Rayfield window state
-task.spawn(function()
-    while task.wait(0.5) do
-        local rayfieldOpen = true
-        pcall(function()
-            -- Check if Rayfield window is open by trying to access it
-            local gui = game:GetService("CoreGui"):FindFirstChild("Rayfield")
-            if gui then
-                rayfieldOpen = gui.Enabled
-            end
-        end)
-        MinimizeBtn.Visible = not rayfieldOpen and not Minimized
-    end
-end)
-
--- Keybind to toggle minimize (Left Alt)
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == MinimizeKey then
-        Minimized = not Minimized
-        if Minimized then
-            MinimizeBtn.Visible = true
-            Rayfield:Toggle()
-        else
-            MinimizeBtn.Visible = false
-            Rayfield:Toggle()
-        end
-    end
-end)
-
---// ==========================================
 --// TABS
 --// ==========================================
 local Tab_Combat  = Window:CreateTab("Combat", "crosshair")
@@ -103,7 +40,6 @@ local Tab_Skins   = Window:CreateTab("Skins", "swords")
 local Tab_Visuals = Window:CreateTab("Visuals", "eye")
 
 Tab_Skins:CreateLabel("this skin changer script by twistedk1d (not made me)", "code", Color3.fromRGB(80,80,80), false)
-Tab_Combat:CreateLabel("Press LeftAlt to minimize/maximize", "keybind", Color3.fromRGB(150,150,150), false)
 
 --// ==========================================
 --// SHARED LOGIC (TEAM CHECK)
