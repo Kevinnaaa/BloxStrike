@@ -1,6 +1,6 @@
 --[[
-    UNIVERSAL FPS - BLOCK STRIKE STYLE ESP + SILENT AIM
-    Adapted ESP boxes & team detection for any FPS
+    UNIVERSAL FPS - SILENT AIMBOT + BLOX STRIKE STYLE ESP
+    Silent aim redirects bullets to enemy head + Box ESP
 --]]
 
 local Players = game:GetService("Players")
@@ -17,16 +17,15 @@ local FOVRadius = 100
 local Smoothness = 0.3
 local TeamCheck = true
 local AimPart = "Head"
-local SilentAimEnabled = true
+local SilentAimEnabled = true -- Silent aim toggle
 local ShowFOV = false
 local TargetLocked = false
 
--- ESP Options (Blox Strike style)
+-- ESP Sub-toggles (Blox Strike style)
 local EspBox = true
-local EspName = true
 local EspHealth = true
+local EspName = true
 local EspDistance = true
-local EspTracers = false
 
 local ESPBoxes = {}
 local ESPColor = Color3.fromRGB(255, 50, 50)
@@ -93,7 +92,7 @@ ESPToggle.Font = Enum.Font.SourceSansBold
 ESPToggle.TextSize = 12
 ESPToggle.Parent = Frame
 
--- ESP Sub-toggles
+-- ESP Sub-toggles (Blox Strike style)
 local ESPBoxToggle = Instance.new("TextButton")
 ESPBoxToggle.Size = UDim2.new(1, -20, 0, 22)
 ESPBoxToggle.Position = UDim2.new(0, 10, 0, 128)
@@ -134,20 +133,10 @@ ESPDistToggle.Font = Enum.Font.SourceSans
 ESPDistToggle.TextSize = 11
 ESPDistToggle.Parent = Frame
 
-local ESPTracerToggle = Instance.new("TextButton")
-ESPTracerToggle.Size = UDim2.new(1, -20, 0, 22)
-ESPTracerToggle.Position = UDim2.new(0, 10, 0, 224)
-ESPTracerToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ESPTracerToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-ESPTracerToggle.Text = "➖ Tracers: OFF"
-ESPTracerToggle.Font = Enum.Font.SourceSans
-ESPTracerToggle.TextSize = 11
-ESPTracerToggle.Parent = Frame
-
 -- FOV Toggle
 local FOVToggleBtn = Instance.new("TextButton")
 FOVToggleBtn.Size = UDim2.new(1, -20, 0, 28)
-FOVToggleBtn.Position = UDim2.new(0, 10, 0, 251)
+FOVToggleBtn.Position = UDim2.new(0, 10, 0, 227)
 FOVToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 FOVToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FOVToggleBtn.Text = "⭕ FOV Circle: OFF"
@@ -155,13 +144,75 @@ FOVToggleBtn.Font = Enum.Font.SourceSans
 FOVToggleBtn.TextSize = 12
 FOVToggleBtn.Parent = Frame
 
+-- FOV Size Controls
+local FOVLabel = Instance.new("TextLabel")
+FOVLabel.Size = UDim2.new(0.3, 0, 0, 20)
+FOVLabel.Position = UDim2.new(0, 10, 0, 260)
+FOVLabel.BackgroundTransparency = 1
+FOVLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+FOVLabel.Text = "FOV: " .. FOVRadius
+FOVLabel.Font = Enum.Font.SourceSans
+FOVLabel.TextSize = 11
+FOVLabel.Parent = Frame
+
+local FOVIncrease = Instance.new("TextButton")
+FOVIncrease.Size = UDim2.new(0, 30, 0, 20)
+FOVIncrease.Position = UDim2.new(0.35, 0, 0, 260)
+FOVIncrease.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+FOVIncrease.TextColor3 = Color3.fromRGB(255, 255, 255)
+FOVIncrease.Text = "+"
+FOVIncrease.Font = Enum.Font.SourceSansBold
+FOVIncrease.TextSize = 14
+FOVIncrease.Parent = Frame
+
+local FOVDecrease = Instance.new("TextButton")
+FOVDecrease.Size = UDim2.new(0, 30, 0, 20)
+FOVDecrease.Position = UDim2.new(0.52, 0, 0, 260)
+FOVDecrease.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+FOVDecrease.TextColor3 = Color3.fromRGB(255, 255, 255)
+FOVDecrease.Text = "-"
+FOVDecrease.Font = Enum.Font.SourceSansBold
+FOVDecrease.TextSize = 14
+FOVDecrease.Parent = Frame
+
+-- Smoothness Slider
+local SmoothLabel = Instance.new("TextLabel")
+SmoothLabel.Size = UDim2.new(0.3, 0, 0, 20)
+SmoothLabel.Position = UDim2.new(0, 10, 0, 285)
+SmoothLabel.BackgroundTransparency = 1
+SmoothLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+SmoothLabel.Text = "Smooth: " .. Smoothness
+SmoothLabel.Font = Enum.Font.SourceSans
+SmoothLabel.TextSize = 11
+SmoothLabel.Parent = Frame
+
+local SmoothIncrease = Instance.new("TextButton")
+SmoothIncrease.Size = UDim2.new(0, 30, 0, 20)
+SmoothIncrease.Position = UDim2.new(0.35, 0, 0, 285)
+SmoothIncrease.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+SmoothIncrease.TextColor3 = Color3.fromRGB(255, 255, 255)
+SmoothIncrease.Text = "+"
+SmoothIncrease.Font = Enum.Font.SourceSansBold
+SmoothIncrease.TextSize = 14
+SmoothIncrease.Parent = Frame
+
+local SmoothDecrease = Instance.new("TextButton")
+SmoothDecrease.Size = UDim2.new(0, 30, 0, 20)
+SmoothDecrease.Position = UDim2.new(0.52, 0, 0, 285)
+SmoothDecrease.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+SmoothDecrease.TextColor3 = Color3.fromRGB(255, 255, 255)
+SmoothDecrease.Text = "-"
+SmoothDecrease.Font = Enum.Font.SourceSansBold
+SmoothDecrease.TextSize = 14
+SmoothDecrease.Parent = Frame
+
 -- Info
 local Info = Instance.new("TextLabel")
 Info.Size = UDim2.new(1, -20, 0, 30)
-Info.Position = UDim2.new(0, 10, 0, 284)
+Info.Position = UDim2.new(0, 10, 0, 312)
 Info.BackgroundTransparency = 1
 Info.TextColor3 = Color3.fromRGB(150, 150, 150)
-Info.Text = "FOV: " .. FOVRadius .. " | Smooth: " .. Smoothness
+Info.Text = "Silent Aim: Bullets redirect to head"
 Info.Font = Enum.Font.SourceSans
 Info.TextSize = 10
 Info.Parent = Frame
@@ -169,7 +220,7 @@ Info.Parent = Frame
 -- Terminate
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(1, -20, 0, 25)
-CloseBtn.Position = UDim2.new(0, 10, 0, 320)
+CloseBtn.Position = UDim2.new(0, 10, 0, 342)
 CloseBtn.BackgroundColor3 = Color3.fromRGB(120, 25, 25)
 CloseBtn.TextColor3 = Color3.fromRGB(255, 150, 150)
 CloseBtn.Text = "TERMINATE"
@@ -196,115 +247,58 @@ LockIndicator.Radius = 10
 LockIndicator.Filled = true
 
 -- =============================================
--- TEAM DETECTION (Blox Strike style)
--- =============================================
-local function getEnemyTeam()
-    -- Try common team properties
-    if LocalPlayer.Team then
-        local playerTeam = LocalPlayer.Team
-        local teams = game:GetService("Teams"):GetTeams()
-        for _, team in pairs(teams) do
-            if team ~= playerTeam then
-                return team
-            end
-        end
-    end
-    
-    -- Try team color detection
-    if LocalPlayer.TeamColor then
-        local playerColor = LocalPlayer.TeamColor
-        -- Return opposite team color logic
-        return nil -- Will fall through to no team check
-    end
-    
-    return nil
-end
-
-local function isEnemy(player)
-    if not TeamCheck then return true end
-    if player == LocalPlayer then return false end
-    
-    -- Check team property
-    if LocalPlayer.Team and player.Team then
-        return player.Team ~= LocalPlayer.Team
-    end
-    
-    -- Check team color
-    if LocalPlayer.TeamColor and player.TeamColor then
-        return player.TeamColor ~= LocalPlayer.TeamColor
-    end
-    
-    return true -- Default to enemy if no team system
-end
-
-local function isEnemyAlive(player)
-    if not player.Character then return false end
-    local humanoid = player.Character:FindFirstChild("Humanoid")
-    return humanoid and humanoid.Health > 0
-end
-
--- =============================================
 -- BLOX STRIKE STYLE ESP
 -- =============================================
 local function createESP(player)
     local esp = {
-        -- Main box (Blox Strike style)
-        BoxOutline = Drawing.new("Square"),
-        Box = Drawing.new("Square"),
+        -- Box (Blox Strike style: thick outline + thin colored inner)
+        boxOutline = Drawing.new("Square"),
+        box = Drawing.new("Square"),
         
         -- Player info
-        Name = Drawing.new("Text"),
-        Distance = Drawing.new("Text"),
+        name = Drawing.new("Text"),
+        distance = Drawing.new("Text"),
         
-        -- Health bar (vertical)
-        HealthOutline = Drawing.new("Line"),
-        HealthBar = Drawing.new("Line"),
-        
-        -- Tracer line
-        Tracer = Drawing.new("Line")
+        -- Health bar (vertical line)
+        healthOutline = Drawing.new("Line"),
+        healthBar = Drawing.new("Line")
     }
     
-    -- Box outline (thick black border)
-    esp.BoxOutline.Thickness = 3
-    esp.BoxOutline.Filled = false
-    esp.BoxOutline.Color = Color3.fromRGB(0, 0, 0)
-    esp.BoxOutline.Visible = false
+    -- Thick black outline
+    esp.boxOutline.Thickness = 3
+    esp.boxOutline.Filled = false
+    esp.boxOutline.Color = Color3.fromRGB(0, 0, 0)
+    esp.boxOutline.Visible = false
     
-    -- Box inner (colored)
-    esp.Box.Thickness = 1
-    esp.Box.Filled = false
-    esp.Box.Color = Color3.fromRGB(255, 50, 50)
-    esp.Box.Visible = false
+    -- Thin colored inner box
+    esp.box.Thickness = 1
+    esp.box.Filled = false
+    esp.box.Color = Color3.fromRGB(255, 50, 50)
+    esp.box.Visible = false
     
-    -- Name
-    esp.Name.Center = true
-    esp.Name.Outline = true
-    esp.Name.Color = Color3.fromRGB(255, 255, 255)
-    esp.Name.Size = 16
-    esp.Name.Visible = false
+    -- Name (centered, white with outline)
+    esp.name.Center = true
+    esp.name.Outline = true
+    esp.name.Color = Color3.fromRGB(255, 255, 255)
+    esp.name.Size = 16
+    esp.name.Visible = false
     
-    -- Distance
-    esp.Distance.Center = true
-    esp.Distance.Outline = true
-    esp.Distance.Color = Color3.fromRGB(200, 200, 200)
-    esp.Distance.Size = 13
-    esp.Distance.Visible = false
+    -- Distance (centered, gray with outline)
+    esp.distance.Center = true
+    esp.distance.Outline = true
+    esp.distance.Color = Color3.fromRGB(200, 200, 200)
+    esp.distance.Size = 13
+    esp.distance.Visible = false
     
-    -- Health bar outline
-    esp.HealthOutline.Thickness = 3
-    esp.HealthOutline.Color = Color3.fromRGB(0, 0, 0)
-    esp.HealthOutline.Visible = false
+    -- Health bar outline (thick black line)
+    esp.healthOutline.Thickness = 3
+    esp.healthOutline.Color = Color3.fromRGB(0, 0, 0)
+    esp.healthOutline.Visible = false
     
-    -- Health bar fill
-    esp.HealthBar.Thickness = 1
-    esp.HealthBar.Color = Color3.fromRGB(0, 255, 0)
-    esp.HealthBar.Visible = false
-    
-    -- Tracer
-    esp.Tracer.Thickness = 1
-    esp.Tracer.Transparency = 0.5
-    esp.Tracer.Color = Color3.fromRGB(255, 50, 50)
-    esp.Tracer.Visible = false
+    -- Health bar fill (colored based on health)
+    esp.healthBar.Thickness = 1
+    esp.healthBar.Color = Color3.fromRGB(0, 255, 0)
+    esp.healthBar.Visible = false
     
     ESPBoxes[player] = esp
     return esp
@@ -316,14 +310,14 @@ local function updateESP()
     
     for player, esp in pairs(ESPBoxes) do
         pcall(function()
-            if not isEnemyAlive(player) then
+            if not player.Character or not player.Character:FindFirstChild("Humanoid") or player.Character.Humanoid.Health <= 0 then
                 for _, drawing in pairs(esp) do
                     if drawing then drawing.Visible = false end
                 end
                 return
             end
             
-            if not isEnemy(player) then
+            if TeamCheck and player.Team == LocalPlayer.Team then
                 for _, drawing in pairs(esp) do
                     if drawing then drawing.Visible = false end
                 end
@@ -354,70 +348,60 @@ local function updateESP()
             local boxX = rootPos.X - boxWidth / 2
             local boxY = headPos.Y
             
-            -- Distance calculation
+            -- Distance
             local distance = localRoot and math.floor((localRoot.Position - root.Position).Magnitude) or 0
             
-            -- Health calculation
+            -- Health (Blox Strike color formula)
             local healthPercent = humanoid.Health / humanoid.MaxHealth
             local healthColor = Color3.fromRGB(1 - healthPercent, healthPercent, 0)
             
-            -- Update box
+            -- Box
             if EspBox then
-                esp.BoxOutline.Size = Vector2.new(boxWidth, boxHeight)
-                esp.BoxOutline.Position = Vector2.new(boxX, boxY)
-                esp.BoxOutline.Visible = true
+                esp.boxOutline.Size = Vector2.new(boxWidth, boxHeight)
+                esp.boxOutline.Position = Vector2.new(boxX, boxY)
+                esp.boxOutline.Visible = true
                 
-                esp.Box.Size = Vector2.new(boxWidth, boxHeight)
-                esp.Box.Position = Vector2.new(boxX, boxY)
-                esp.Box.Color = healthColor
-                esp.Box.Visible = true
+                esp.box.Size = Vector2.new(boxWidth, boxHeight)
+                esp.box.Position = Vector2.new(boxX, boxY)
+                esp.box.Color = healthColor
+                esp.box.Visible = true
             else
-                esp.BoxOutline.Visible = false
-                esp.Box.Visible = false
+                esp.boxOutline.Visible = false
+                esp.box.Visible = false
             end
             
-            -- Update health bar
+            -- Health bar
             if EspHealth then
                 local barX = boxX - 6
-                esp.HealthOutline.From = Vector2.new(barX, boxY - 1)
-                esp.HealthOutline.To = Vector2.new(barX, boxY + boxHeight + 1)
-                esp.HealthOutline.Visible = true
+                esp.healthOutline.From = Vector2.new(barX, boxY - 1)
+                esp.healthOutline.To = Vector2.new(barX, boxY + boxHeight + 1)
+                esp.healthOutline.Visible = true
                 
-                esp.HealthBar.From = Vector2.new(barX, boxY + boxHeight)
-                esp.HealthBar.To = Vector2.new(barX, boxY + boxHeight - (boxHeight * healthPercent))
-                esp.HealthBar.Color = healthColor
-                esp.HealthBar.Visible = true
+                esp.healthBar.From = Vector2.new(barX, boxY + boxHeight)
+                esp.healthBar.To = Vector2.new(barX, boxY + boxHeight - (boxHeight * healthPercent))
+                esp.healthBar.Color = healthColor
+                esp.healthBar.Visible = true
             else
-                esp.HealthOutline.Visible = false
-                esp.HealthBar.Visible = false
+                esp.healthOutline.Visible = false
+                esp.healthBar.Visible = false
             end
             
-            -- Update name
+            -- Name
             if EspName then
-                esp.Name.Text = player.Name
-                esp.Name.Position = Vector2.new(rootPos.X, boxY - 20)
-                esp.Name.Visible = true
+                esp.name.Text = player.Name
+                esp.name.Position = Vector2.new(rootPos.X, boxY - 20)
+                esp.name.Visible = true
             else
-                esp.Name.Visible = false
+                esp.name.Visible = false
             end
             
-            -- Update distance
+            -- Distance
             if EspDistance then
-                esp.Distance.Text = "[" .. distance .. "m]"
-                esp.Distance.Position = Vector2.new(rootPos.X, boxY + boxHeight + 2)
-                esp.Distance.Visible = true
+                esp.distance.Text = "[" .. distance .. "m]"
+                esp.distance.Position = Vector2.new(rootPos.X, boxY + boxHeight + 2)
+                esp.distance.Visible = true
             else
-                esp.Distance.Visible = false
-            end
-            
-            -- Update tracer
-            if EspTracers and localRoot then
-                esp.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
-                esp.Tracer.To = Vector2.new(rootPos.X, legPos.Y)
-                esp.Tracer.Color = healthColor
-                esp.Tracer.Visible = true
-            else
-                esp.Tracer.Visible = false
+                esp.distance.Visible = false
             end
         end)
     end
@@ -487,17 +471,33 @@ ESPDistToggle.MouseButton1Click:Connect(function()
     ESPDistToggle.BackgroundColor3 = EspDistance and Color3.fromRGB(30, 120, 30) or Color3.fromRGB(50, 50, 50)
 end)
 
-ESPTracerToggle.MouseButton1Click:Connect(function()
-    EspTracers = not EspTracers
-    ESPTracerToggle.Text = "➖ Tracers: " .. (EspTracers and "ON" or "OFF")
-    ESPTracerToggle.BackgroundColor3 = EspTracers and Color3.fromRGB(30, 120, 30) or Color3.fromRGB(50, 50, 50)
-end)
-
 FOVToggleBtn.MouseButton1Click:Connect(function()
     ShowFOV = not ShowFOV
     FOVCircle.Visible = ShowFOV
     FOVToggleBtn.Text = "⭕ FOV Circle: " .. (ShowFOV and "ON" or "OFF")
     FOVToggleBtn.BackgroundColor3 = ShowFOV and Color3.fromRGB(30, 100, 150) or Color3.fromRGB(50, 50, 50)
+end)
+
+FOVIncrease.MouseButton1Click:Connect(function()
+    FOVRadius = math.min(FOVRadius + 25, 500)
+    FOVCircle.Radius = FOVRadius
+    FOVLabel.Text = "FOV: " .. FOVRadius
+end)
+
+FOVDecrease.MouseButton1Click:Connect(function()
+    FOVRadius = math.max(FOVRadius - 25, 25)
+    FOVCircle.Radius = FOVRadius
+    FOVLabel.Text = "FOV: " .. FOVRadius
+end)
+
+SmoothIncrease.MouseButton1Click:Connect(function()
+    Smoothness = math.min(Smoothness + 0.05, 1)
+    SmoothLabel.Text = "Smooth: " .. string.format("%.2f", Smoothness)
+end)
+
+SmoothDecrease.MouseButton1Click:Connect(function()
+    Smoothness = math.max(Smoothness - 0.05, 0.05)
+    SmoothLabel.Text = "Smooth: " .. string.format("%.2f", Smoothness)
 end)
 
 CloseBtn.MouseButton1Click:Connect(function()
@@ -511,16 +511,29 @@ CloseBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =============================================
+-- FOV CIRCLE UPDATER
+-- =============================================
+task.spawn(function()
+    while ScriptActive do
+        if ShowFOV then
+            FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+        end
+        task.wait(0.1)
+    end
+end)
+
+-- =============================================
 -- SILENT AIM & TARGET DETECTION
 -- =============================================
 local function getClosestEnemy()
     local closest = nil
     local closestDist = FOVRadius
     for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and isEnemy(player) then
+        if player ~= LocalPlayer and player.Character then
             local char = player.Character
             local humanoid = char:FindFirstChild("Humanoid")
             if humanoid and humanoid.Health <= 0 then continue end
+            if TeamCheck and player.Team == LocalPlayer.Team then continue end
             
             local targetPart = char:FindFirstChild(AimPart) or char:FindFirstChild("Head")
             if targetPart then
@@ -552,6 +565,7 @@ oldIndex = hookmetamethod(game, "__index", function(self, key)
     if SilentAimEnabled and key == "Hit" then
         local target = getClosestEnemy()
         if target and target.part then
+            -- Redirect bullet to head
             return target.part.Position
         end
     end
@@ -559,7 +573,7 @@ oldIndex = hookmetamethod(game, "__index", function(self, key)
     return oldIndex(self, key)
 end)
 
--- Target status updater
+-- Mouse movement aim assist (as backup)
 task.spawn(function()
     while ScriptActive do
         if AimbotEnabled and not SilentAimEnabled then
@@ -611,16 +625,6 @@ task.spawn(function()
     end
 end)
 
--- FOV Circle updater
-task.spawn(function()
-    while ScriptActive do
-        if ShowFOV then
-            FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-        end
-        task.wait(0.1)
-    end
-end)
-
 -- ESP update loop
 task.spawn(function()
     while ScriptActive do
@@ -631,15 +635,15 @@ task.spawn(function()
     end
 end)
 
--- Cleanup
+-- Cleanup on leave
 LocalPlayer.OnTeleport:Connect(function()
     ScriptActive = false
 end)
 
 print("╔══════════════════════════════════════╗")
-print("║  BLOX STRIKE STYLE ESP + SILENT AIM║")
-print("║  - Team detection adapted          ║")
-print("║  - Box, Health, Name, Distance    ║")
-print("║  - Tracers option available        ║")
-print("║  - Silent aim redirects to head   ║")
+print("║  SILENT AIM + BLOX STRIKE ESP      ║")
+print("║  - Silent Aim: Bullets hit head    ║")
+print("║  - Blox Strike Style Box ESP       ║")
+print("║  - Health bars & distance          ║")
+print("║  - Adjustable FOV & Smoothness     ║")
 print("╚══════════════════════════════════════╝")
