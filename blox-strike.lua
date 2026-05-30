@@ -1,5 +1,5 @@
 -- free no soo bad
-local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/twistedk1d/BloxStrike/refs/heads/main/Source/UI/source.lua"))()
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kevinnaaa/BloxStrike/main/ref.lua"))()
 
 -- Force enable minimize functionality in Rayfield
 -- This patches the UI to ensure the minimize button works correctly
